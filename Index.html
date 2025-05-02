@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulasi Gadai Crypto</title>
+  <style>
+    body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stats-container {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: linear-gradient(145deg, #1e1e2f, #292940);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  padding: 30px 40px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  width: 250px;
+}
+.stat-card:hover {
+  transform: translateY(-6px);
+}
+.icon {
+  font-size: 40px;
+  color: #00e0ff;
+  margin-bottom: 12px;
+}
+.number {
+  font-size: 36px;
+  font-weight: bold;
+  color: #33ffcc;
+}
+.label {
+  font-size: 16px;
+  color: #d3d3d3;
+}
+
+.card {
+  background: rgba(30, 30, 50, 0.9);
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 580px;
+  width: 100%;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+h2 {
+  text-align: center;
+  color: #00e0ff;
+  margin-bottom: 20px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  margin: 12px 0;
+  font-size: 16px;
+}
+input[type="number"], input[type="text"], select {
+  background: #343457;
+  color: #fff;
+}
+input::placeholder {
+  color: #bbb;
+}
+button {
+  background: linear-gradient(to right, #00e0ff, #00ffc3);
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 10px #00ffc3;
+}
+#whatsapp-btn {
+  background: linear-gradient(to right, #25d366, #128c7e);
+  color: white;
+}
+.result {
+  margin-top: 20px;
+  background: #2a2a44;
+  padding: 20px;
+  border-radius: 14px;
+}
+.result span {
+  color: #33ffcc;
+  font-weight: bold;
+}
+footer {
+  background: #1f1f30;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+  margin-top: 40px;
+  border-radius: 16px;
+  color: #ccc;
+}
+footer a {
+  color: #00c3ff;
+  text-decoration: none;
+  font-weight: bold;
+}
+.loan-item {
+  background: #2c2c50;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  border-left: 5px solid #33ffcc;
+}
+.loan-item button {
+  background: #ff5e5e;
+  color: white;
+  margin-top: 10px;
+}
+.footer-loan-btn {
+  background: linear-gradient(to right, #ffdd00, #ffaa00);
+  color: black;
+  font-size: 14px;
+  padding: 10px 16px;
+  margin-top: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.footer-loan-btn:hover {
+  transform: scale(1.05);
+}
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Statistik -->
+  <div class="stats-container" id="stats">
+    <div class="stat-card">
+      <div class="icon"><i class="fas fa-check-circle"></i></div>
+      <div class="number" id="transaksi">0</div>
+      <div class="label">Transaksi Berhasil</div>
+    </div>
+    <div class="stat-card">
+      <div class="icon"><i class="fas fa-users"></i></div>
+      <div class="number" id="nasabah">0</div>
+      <div class="label">Nasabah Puas</div>
+    </div>
+  </div>
+
+  <!-- Simulasi Gadai -->
+  <div class="card">
+    <h2>Simulasi Gadai Crypto</h2>
+
+    <select id="crypto-select" size="6"></select>
+    <input type="number" id="amount-input" placeholder="Jumlah koin" min="0.01" value="1">
+    <input type="text" id="user-name" placeholder="Nama Lengkap">
+    <input type="text" id="user-contact" placeholder="Nomor Kontak / Email">
+
+    <label for="tenor-select">Pilih Lama Gadai (hari):</label>
+    <select id="tenor-select">
+      <option value="7">7 Hari</option>
+      <option value="14">14 Hari</option>
+      <option value="30">30 Hari</option>
+      <option value="60">60 Hari</option>
+    </select>
+
+    <button onclick="calculateLoan()">Hitung Pinjaman</button>
+    <button id="whatsapp-btn" onclick="sendToWhatsApp()" style="display:none;">Kirim Bukti ke WhatsApp</button>
+
+    <div class="result" id="result" style="display:none;">
+      <p>Harga Koin Saat Ini: <span id="price-value">Rp 0</span></p>
+      <p>Nilai Aset: <span id="asset-value">Rp 0</span></p>
+      <p>Pinjaman Maksimal (68%): <span id="loan-value">Rp 0</span></p>
+      <p>Total Bunga (0.17%/hari): <span id="interest-value">Rp 0</span></p>
+      <p>Biaya Admin (10% dari aset): <span id="admin-value">Rp 0</span></p>
+      <p><strong>Total Pelunasan: <span id="total-pay">Rp 0</span></strong></p>
+    </div>
+
+    <div id="active-loan" style="display:none; background:#2a2a44; margin-top:20px; padding:20px; border-radius:12px;">
+      <h3>Gadai Aktif</h3>
+      <div id="active-loan-list"></div>
+      <button onclick="clearActiveLoan()" style="margin-top:10px; background:#ff5e5e; color:#fff;">Hapus Semua Gadai</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>Hubungi Kami:</p>
+    <p>📞 <a href="tel:+628567624130">08567624130</a> | 📧 <a href="mailto:cv.sellingwithus@gmail.com">cv.sellingwithus@gmail.com</a></p>
+    <button class="footer-loan-btn" onclick="showActiveLoan()">Gadai Aktif</button>
+  </footer>
+
+  <script>
+    // Statistik animasi
+    function animateValue(id, start, end, duration) {
+      const obj = document.getElementById(id);
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerText = Math.floor(progress * (end - start) + start).toLocaleString();
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateValue("transaksi", 0, 1376, 1500);
+          animateValue("nasabah", 0, 1052, 1500);
+          observer.disconnect();
+        }
+      });
+    }, {
+      threshold: 0.5
+    });
+
+    observer.observe(document.getElementById("stats"));
+
+    // Simulasi Gadai Script...
+    const select = document.getElementById('crypto-select');
+    let coinList = [];
+
+    fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1')
+      .then(res => res.json())
+      .then(data => {
+        coinList = data.sort((a, b) => a.name.localeCompare(b.name));
+        renderOptions(coinList);
+      });
+
+    function renderOptions(coins) {
+      select.innerHTML = '';
+      coins.forEach(coin => {
+        const option = document.createElement('option');
+        option.value = coin.id;
+        option.textContent = `${coin.name} (${coin.symbol.toUpperCase()})`;
+        select.appendChild(option);
+      });
+    }
+
+    async function calculateLoan() {
+      const coinId = select.value;
+      const amount = parseFloat(document.getElementById('amount-input').value);
+      const days = parseInt(document.getElementById('tenor-select').value);
+      if (!coinId || isNaN(amount)) return;
+
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
+      const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+      const data = await res.json();
+      const rateData = await rateRes.json();
+
+      const usdToIdr = rateData.rates.IDR;
+      const priceUsd = data[coinId].usd;
+      const price = priceUsd * usdToIdr;
+
+      const assetValue = price * amount;
+      const loanValue = assetValue * 0.68;
+      const interest = loanValue * 0.0017 * days;
+      const adminFee = assetValue * 0.10;
+      const totalPay = loanValue + interest + adminFee;
+
+      document.getElementById('price-value').textContent = formatRupiah(price);
+      document.getElementById('asset-value').textContent = formatRupiah(assetValue);
+      document.getElementById('loan-value').textContent = formatRupiah(loanValue);
+      document.getElementById('interest-value').textContent = formatRupiah(interest);
+      document.getElementById('admin-value').textContent = formatRupiah(adminFee);
+      document.getElementById('total-pay').textContent = formatRupiah(totalPay);
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('whatsapp-btn').style.display = 'block';
+    }
+
+    function formatRupiah(angka) {
+      return 'Rp ' + angka.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function sendToWhatsApp() {
+      const name = document.getElementById('user-name').value.trim();
+      const contact = document.getElementById('user-contact').value.trim();
+      const coin = select.options[select.selectedIndex]?.text;
+      const amount = parseFloat(document.getElementById('amount-input').value);
+      const assetValue = document.getElementById('asset-value').textContent;
+      const loan = document.getElementById('loan-value').textContent;
+      const interest = document.getElementById('interest-value').textContent;
+      const admin = document.getElementById('admin-value').textContent;
+      const total = document.getElementById('total-pay').textContent;
+      const days = parseInt(document.getElementById('tenor-select').value);
+
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + days);
+      const dueDateStr = dueDate.toLocaleDateString('id-ID');
+
+      if (!name || !contact) {
+        alert('Mohon isi nama dan kontak.');
+        return;
+      }
+
+      const message = `*Bukti Pesanan Gadai Crypto*\n\n` +
+        `Nama: ${name}\nKontak: ${contact}\nKoin: ${coin}\nJumlah Koin: ${amount}\n` +
+        `Nilai Aset: ${assetValue}\nPinjaman Maks: ${loan}\nBunga (${days} hari): ${interest}\n` +
+        `Biaya Admin (10%): ${admin}\nDurasi Gadai: ${days} hari\nJatuh Tempo: ${dueDateStr}\n\n` +
+        `Total Pelunasan: ${total}`;
+
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/628567624130?text=${encodedMessage}`;
+      window.open(whatsappUrl, '_blank');
+
+      const newLoan = {
+        name, contact, coin, amount, assetValue, loan, interest, admin, total, days, dueDateStr
+      };
+      let loans = JSON.parse(localStorage.getItem("activeLoans")) || [];
+      loans.push(newLoan);
+      localStorage.setItem("activeLoans", JSON.stringify(loans));
+    }
+
+    function showActiveLoan() {
+      const loans = JSON.parse(localStorage.getItem("activeLoans")) || [];
+      const container = document.getElementById("active-loan-list");
+      container.innerHTML = "";
+      if (loans.length === 0) {
+        alert("Belum ada data gadai aktif.");
+        return;
+      }
+
+      loans.forEach((loan, index) => {
+        const div = document.createElement("div");
+        div.className = "loan-item";
+        div.innerHTML = `
+          <p><strong>Nama:</strong> ${loan.name}</p>
+          <p><strong>Koin:</strong> ${loan.coin} (${loan.amount})</p>
+          <p><strong>Nilai Aset:</strong> ${loan.assetValue}</p>
+          <p><strong>Pinjaman:</strong> ${loan.loan}</p>
+          <p><strong>Bunga:</strong> ${loan.interest}</p>
+          <p><strong>Admin:</strong> ${loan.admin}</p>
+          <p><strong>Durasi:</strong> ${loan.days} hari</p>
+          <p><strong>Jatuh Tempo:</strong> ${loan.dueDateStr}</p>
+          <p><strong>Total Pelunasan:</strong> ${loan.total}</p>
+          <button onclick="deleteLoan(${index})">Hapus Gadai Ini</button>
+        `;
+        container.appendChild(div);
+      });
+
+      document.getElementById("active-loan").style.display = "block";
+    }
+
+    function deleteLoan(index) {
+      let loans = JSON.parse(localStorage.getItem("activeLoans")) || [];
+      loans.splice(index, 1);
+      localStorage.setItem("activeLoans", JSON.stringify(loans));
+      showActiveLoan();
+    }
+
+    function clearActiveLoan() {
+      localStorage.removeItem("activeLoans");
+      document.getElementById("active-loan").style.display = 'none';
+      alert("Semua data gadai aktif telah dihapus.");
+    }
+  </script>
+</body>
+</html>
